@@ -21,6 +21,18 @@ public class Section
         this.useremail = useremail;
         this.keep = keep;
     }
+    public Section()
+    {
+        this.sectionName = "";
+        this.type = "";
+        this.startTime = "";
+        this.endTime = "";
+        this.roomInfo = "";
+        this.password = "";
+        this.username = "";
+        this.useremail = "";
+        this.keep = false;
+    }
     public String getSectionName()
     {
         return sectionName;
