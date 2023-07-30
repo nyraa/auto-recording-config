@@ -3,12 +3,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.MaskFormatter;
 
-import javafx.scene.text.Text;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.TextEvent;
-import java.awt.event.TextListener;
 import java.awt.event.ActionEvent;
 import java.util.Vector;
 
