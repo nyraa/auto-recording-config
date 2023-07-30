@@ -92,7 +92,6 @@ public class DataManagement
             e.printStackTrace();
             return false;
         }
-        System.out.println(header);
         return true;
     }
     public static Vector<Section> getSections()
