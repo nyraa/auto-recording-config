@@ -1,7 +1,11 @@
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
+
 import java.awt.*;
+import java.util.Vector;
 
 public class Window extends JFrame {
+    private boolean isEditing = false;
     public Window() {
         super("config");
         setSize(600, 400);
@@ -47,16 +51,83 @@ public class Window extends JFrame {
 
         // lower panel
         JPanel lowerPanel = new JPanel();
-        JList<Section> sectionList = new JList<>();
+        lowerPanel.setLayout(new GridBagLayout());
+
+        Vector<Section> sections = DataManagement.getSections();
+        JList<Section> sectionList = new JList<>(sections);
+        sectionList.setCellRenderer(new SectionListRenderer());
         sectionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         sectionList.setLayoutOrientation(JList.VERTICAL);
         sectionList.setVisibleRowCount(-1);
-        sectionList.setCellRenderer(new SectionListRenderer());
 
 
         JScrollPane scrollPane = new JScrollPane(sectionList);
-        lowerPanel.add(scrollPane);
-        container.add(lowerPanel, "West");
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        lowerPanel.add(scrollPane, gbc);
+
+        // date format: YYYY-MM-DD HH:MM:SS
+        MaskFormatter dateFormatter;
+        try
+        {
+            dateFormatter = new MaskFormatter("####-##-## ##:##:##");
+            dateFormatter.setPlaceholderCharacter('0');
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return;
+        }
+
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new GridLayout(0, 2));
+        formPanel.add(new JLabel("Section: "));
+        JTextField sectionField = new JTextField();
+        formPanel.add(sectionField);
+        formPanel.add(new JLabel("Type: "));
+        // type: combobox
+        String[] types = {"Zoom", "Webex"};
+        JComboBox<String> typeField = new JComboBox<>(types);
+        formPanel.add(typeField);
+        formPanel.add(new JLabel("Room: "));
+        JTextField roomField = new JTextField();
+        formPanel.add(roomField);
+        formPanel.add(new JLabel("Start: "));
+        JFormattedTextField startField = new JFormattedTextField(dateFormatter);
+        formPanel.add(startField);
+        formPanel.add(new JLabel("End: "));
+        JFormattedTextField endField = new JFormattedTextField(dateFormatter);
+        formPanel.add(endField);
+        formPanel.add(new JLabel("Password: "));
+        JTextField passwordField = new JTextField();
+        formPanel.add(passwordField);
+        formPanel.add(new JLabel("Name: "));
+        JTextField nameField = new JTextField();
+        formPanel.add(nameField);
+        formPanel.add(new JLabel("Email: "));
+        JTextField emailField = new JTextField();
+        formPanel.add(emailField);
+        formPanel.add(new JLabel("Keep: "));
+        JCheckBox keepCheckBox = new JCheckBox();
+        formPanel.add(keepCheckBox);
+
+        gbc.weightx = 2;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        lowerPanel.add(formPanel, gbc);
+        container.add(lowerPanel, "Center");
+
+        JPanel editPanel = new JPanel();
+        JButton addButton = new JButton("New");
+        JButton saveButton = new JButton("Save");
+        JButton deleteButton = new JButton("Delete");
+        editPanel.add(addButton);
+        editPanel.add(saveButton);
+        editPanel.add(deleteButton);
+
+        container.add(editPanel, "South");
     }
 }
 
