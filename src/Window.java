@@ -18,6 +18,9 @@ public class Window extends JFrame {
         setSize(600, 400);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        
         Container container = getContentPane();
         container.setLayout(new BorderLayout());
 
