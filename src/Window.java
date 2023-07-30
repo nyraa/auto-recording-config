@@ -143,7 +143,6 @@ public class Window extends JFrame {
         formPanel.add(new JLabel("Password: "));
         JTextField passwordField = new JTextField();
         passwordField.getDocument().addDocumentListener(editFormDocumentListener);
-        passwordField.setEnabled(false);
         formPanel.add(passwordField);
 
         formPanel.add(new JLabel("Name: "));
@@ -161,6 +160,21 @@ public class Window extends JFrame {
         JCheckBox keepCheckBox = new JCheckBox();
         keepCheckBox.addActionListener(editFormListener);
         formPanel.add(keepCheckBox);
+
+        // add event to combo box
+        typeField.addActionListener((e) ->
+        {
+            if(typeField.getSelectedItem().equals("zoom"))
+            {
+                passwordField.setEnabled(true);
+                emailField.setEnabled(false);
+            }
+            else if(typeField.getSelectedItem().equals("webex"))
+            {
+                passwordField.setEnabled(false);
+                emailField.setEnabled(true);
+            }
+        });
 
         // add event to section list
         sectionList.addListSelectionListener(new ListSelectionListener() {
