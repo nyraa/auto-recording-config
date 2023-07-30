@@ -1,7 +1,15 @@
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.MaskFormatter;
 
+import javafx.scene.text.Text;
+
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.TextEvent;
+import java.awt.event.TextListener;
+import java.awt.event.ActionEvent;
 import java.util.Vector;
 
 public class Window extends JFrame {
@@ -9,6 +17,7 @@ public class Window extends JFrame {
     public Window() {
         super("config");
         setSize(600, 400);
+        setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Container container = getContentPane();
         container.setLayout(new BorderLayout());
@@ -81,36 +90,77 @@ public class Window extends JFrame {
             return;
         }
 
+        ActionListener editFormListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isEditing = true;
+            }
+        };
+        DocumentListener editFormDocumentListener = new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                isEditing = true;
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                isEditing = true;
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                isEditing = true;
+            }
+        };
+
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new GridLayout(0, 2));
         formPanel.add(new JLabel("Section: "));
         JTextField sectionField = new JTextField();
+        sectionField.getDocument().addDocumentListener(editFormDocumentListener);
         formPanel.add(sectionField);
+
         formPanel.add(new JLabel("Type: "));
-        // type: combobox
-        String[] types = {"Zoom", "Webex"};
+        String[] types = {"zoom", "webex"};
         JComboBox<String> typeField = new JComboBox<>(types);
+        typeField.addActionListener(editFormListener);
         formPanel.add(typeField);
+
         formPanel.add(new JLabel("Room: "));
         JTextField roomField = new JTextField();
+        roomField.getDocument().addDocumentListener(editFormDocumentListener);
         formPanel.add(roomField);
+
         formPanel.add(new JLabel("Start: "));
         JFormattedTextField startField = new JFormattedTextField(dateFormatter);
+        startField.getDocument().addDocumentListener(editFormDocumentListener);
         formPanel.add(startField);
+
         formPanel.add(new JLabel("End: "));
         JFormattedTextField endField = new JFormattedTextField(dateFormatter);
+        endField.getDocument().addDocumentListener(editFormDocumentListener);
         formPanel.add(endField);
+
         formPanel.add(new JLabel("Password: "));
         JTextField passwordField = new JTextField();
+        passwordField.getDocument().addDocumentListener(editFormDocumentListener);
+        passwordField.setEnabled(false);
         formPanel.add(passwordField);
+
         formPanel.add(new JLabel("Name: "));
         JTextField nameField = new JTextField();
+        nameField.getDocument().addDocumentListener(editFormDocumentListener);
         formPanel.add(nameField);
+
         formPanel.add(new JLabel("Email: "));
         JTextField emailField = new JTextField();
+        emailField.getDocument().addDocumentListener(editFormDocumentListener);
+        emailField.setEnabled(false);
         formPanel.add(emailField);
+
         formPanel.add(new JLabel("Keep: "));
         JCheckBox keepCheckBox = new JCheckBox();
+        keepCheckBox.addActionListener(editFormListener);
         formPanel.add(keepCheckBox);
 
         gbc.weightx = 2;
