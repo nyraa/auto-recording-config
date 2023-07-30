@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.text.MaskFormatter;
 
 
@@ -159,6 +161,30 @@ public class Window extends JFrame {
         JCheckBox keepCheckBox = new JCheckBox();
         keepCheckBox.addActionListener(editFormListener);
         formPanel.add(keepCheckBox);
+
+        // add event to section list
+        sectionList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(e.getValueIsAdjusting()) {
+                    return;
+                }
+                Section section = sectionList.getSelectedValue();
+                if (section == null) {
+                    return;
+                }
+                sectionField.setText(section.getSectionName());
+                typeField.setSelectedItem(section.getType());
+                roomField.setText(section.getRoomInfo());
+                startField.setText(section.getStartTime());
+                endField.setText(section.getEndTime());
+                passwordField.setText(section.getPassword());
+                nameField.setText(section.getUseremail());
+                emailField.setText(section.getUseremail());
+                keepCheckBox.setSelected(section.isKeep());
+                isEditing = false;
+            }
+        });
 
         gbc.weightx = 2;
         gbc.weighty = 1;

@@ -65,7 +65,7 @@ public class Section
     {
         return useremail;
     }
-    public boolean getKeep()
+    public boolean isKeep()
     {
         return keep;
     }
