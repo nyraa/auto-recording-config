@@ -12,7 +12,7 @@ public class DataManagement
         {
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
             String line = null;
-            Section currentSection = new Section();
+            Section currentSection = null;
             String sectionName = null;
             while((line = reader.readLine()) != null)
             {
@@ -30,6 +30,11 @@ public class DataManagement
                     if(line.equals("[DEFAULT]"))
                     {
                         header = line + "\n";
+                    }
+                    else
+                    {
+                        currentSection = new Section();
+                        currentSection.setSectionName(sectionName);
                     }
                     continue;
                 }
@@ -75,6 +80,10 @@ public class DataManagement
                         currentSection.setUseremail(propValue);
                     }
                 }
+            }
+            if(sectionName != null && !sectionName.equals("DEFAULT"))
+            {
+                sections.add(currentSection);
             }
             reader.close();
         }
