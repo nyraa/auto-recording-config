@@ -169,6 +169,23 @@ public class Window extends JFrame {
                 if(e.getValueIsAdjusting()) {
                     return;
                 }
+                if(isEditing)
+                {
+                    // prompt to save or cancel
+                    int result = JOptionPane.showConfirmDialog(null, "Unsaved changes, save?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
+                    if(result == JOptionPane.YES_OPTION)
+                    {
+
+                    }
+                    else if(result == JOptionPane.NO_OPTION)
+                    {
+
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
                 Section section = sectionList.getSelectedValue();
                 if (section == null) {
                     return;
