@@ -226,7 +226,7 @@ public class Window extends JFrame {
                 startField.setText(section.getStartTime());
                 endField.setText(section.getEndTime());
                 passwordField.setText(section.getPassword());
-                nameField.setText(section.getUseremail());
+                nameField.setText(section.getUsername());
                 emailField.setText(section.getUseremail());
                 keepField.setSelectedItem(section.getKeep());
                 isEditing = false;
