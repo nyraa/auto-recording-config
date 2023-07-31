@@ -242,6 +242,43 @@ public class Window extends JFrame {
         JPanel editPanel = new JPanel();
         JButton addButton = new JButton("New");
         JButton saveButton = new JButton("Save");
+        saveButton.addActionListener((e) ->
+        {
+            Section section;
+            if(sectionList.getSelectedIndex() == -1)
+            {
+                section = new Section();
+            }
+            else
+            {
+                section = sectionList.getSelectedValue();
+            }
+            String sectionName = sectionField.getText();
+            if(sectionName.equals(""))
+            {
+                JOptionPane.showMessageDialog(null, "Section name cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            section.setSectionName(sectionName);
+            section.setType((String)typeField.getSelectedItem());
+            section.setRoomInfo(roomField.getText());
+            section.setStartTime(startField.getText());
+            section.setEndTime(endField.getText());
+            section.setPassword(passwordField.getText());
+            section.setUsername(nameField.getText());
+            section.setUseremail(emailField.getText());
+            section.setKeep(keepField.getSelectedIndex());
+            isEditing = false;
+            if(sectionList.getSelectedIndex() == -1)
+            {
+                dataManagementModel.addElement(section);
+                sectionList.setSelectedIndex(dataManagementModel.getSize() - 1);
+            }
+            else
+            {
+                sectionList.repaint();
+            }
+        });
         JButton deleteButton = new JButton("Delete");
         deleteButton.addActionListener((e) ->
         {
