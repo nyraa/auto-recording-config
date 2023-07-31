@@ -203,7 +203,14 @@ public class Window extends JFrame {
                     {
                         // restore selection
                         isAdjusting = true;
-                        sectionList.setSelectedIndex(prevIndex);
+                        if(prevIndex != -1)
+                        {
+                            sectionList.setSelectedIndex(prevIndex);
+                        }
+                        else
+                        {
+                            sectionList.clearSelection();
+                        }
                         isAdjusting = false;
                         return;
                     }
