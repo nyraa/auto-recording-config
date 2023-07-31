@@ -13,6 +13,8 @@ import java.util.Vector;
 
 public class Window extends JFrame {
     private boolean isEditing = false;
+    private int prevIndex = -1;
+    private boolean isAdjusting = false;
     public Window() {
         super("config");
         setSize(600, 400);
@@ -20,7 +22,7 @@ public class Window extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        
+
         Container container = getContentPane();
         container.setLayout(new BorderLayout());
 
@@ -64,7 +66,7 @@ public class Window extends JFrame {
         JPanel lowerPanel = new JPanel();
         lowerPanel.setLayout(new GridBagLayout());
 
-        Vector<Section> sections = DataManagement.getSections();
+        Vector<Section> sections = DataManagementModel.getSections();
         JList<Section> sectionList = new JList<>(sections);
         sectionList.setCellRenderer(new SectionListRenderer());
         sectionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -183,6 +185,10 @@ public class Window extends JFrame {
         sectionList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
+                if(isAdjusting)
+                {
+                    return;
+                }
                 if(e.getValueIsAdjusting()) {
                     return;
                 }
@@ -200,9 +206,14 @@ public class Window extends JFrame {
                     }
                     else
                     {
+                        // restore selection
+                        isAdjusting = true;
+                        sectionList.setSelectedIndex(prevIndex);
+                        isAdjusting = false;
                         return;
                     }
                 }
+                prevIndex = sectionList.getSelectedIndex();
                 Section section = sectionList.getSelectedValue();
                 if (section == null) {
                     return;
@@ -230,6 +241,30 @@ public class Window extends JFrame {
         JButton addButton = new JButton("New");
         JButton saveButton = new JButton("Save");
         JButton deleteButton = new JButton("Delete");
+        deleteButton.addActionListener((e) ->
+        {
+            if(sectionList.getSelectedIndex() == -1)
+            {
+                return;
+            }
+            Section section = sectionList.getSelectedValue();
+            int result = JOptionPane.showConfirmDialog(null, "Delete section " + section.getSectionName() + "?", "Warning", JOptionPane.YES_NO_OPTION);
+            if(result == JOptionPane.YES_OPTION)
+            {
+                isEditing = false;
+                DataManagementModel.removeSection(section);
+                sectionList.setListData(DataManagementModel.getSections());
+                if(prevIndex > 0)
+                {
+                    sectionList.setSelectedIndex(prevIndex - 1);
+                }
+                else
+                {
+                    sectionList.setSelectedIndex(0);
+                }
+                prevIndex = sectionList.getSelectedIndex();
+            }
+        });
         editPanel.add(addButton);
         editPanel.add(saveButton);
         editPanel.add(deleteButton);

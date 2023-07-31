@@ -1,7 +1,8 @@
 import java.util.Vector;
+
 import java.io.*;
 
-public class DataManagement
+public class DataManagementModel
 {
     private static Vector<Section> sections = new Vector<>();
     private static String header = null;
@@ -97,5 +98,9 @@ public class DataManagement
     public static Vector<Section> getSections()
     {
         return sections;
+    }
+    public static boolean removeSection(Section toRemove)
+    {
+        return sections.remove(toRemove);
     }
 }
