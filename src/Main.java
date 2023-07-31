@@ -2,8 +2,7 @@ public class Main
 {
     public static void main(String[] args)
     {
-        DataManagementModel.loadSchedule(args[0]);
-        Window window = new Window();
+        Window window = new Window(args[0]);
         window.setVisible(true);
     }
 }

@@ -5,6 +5,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.MaskFormatter;
 
+import javafx.scene.chart.PieChart.Data;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -15,7 +16,7 @@ public class Window extends JFrame {
     private boolean isEditing = false;
     private int prevIndex = -1;
     private boolean isAdjusting = false;
-    public Window() {
+    public Window(String filename) {
         super("config");
         setSize(600, 400);
         setResizable(false);
@@ -66,8 +67,8 @@ public class Window extends JFrame {
         JPanel lowerPanel = new JPanel();
         lowerPanel.setLayout(new GridBagLayout());
 
-        Vector<Section> sections = DataManagementModel.getSections();
-        JList<Section> sectionList = new JList<>(sections);
+        DataManagementModel dataManagementModel = new DataManagementModel(filename);
+        JList<Section> sectionList = new JList<>(dataManagementModel);
         sectionList.setCellRenderer(new SectionListRenderer());
         sectionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         sectionList.setLayoutOrientation(JList.VERTICAL);
@@ -162,9 +163,10 @@ public class Window extends JFrame {
         formPanel.add(emailField);
 
         formPanel.add(new JLabel("Keep: "));
-        JCheckBox keepCheckBox = new JCheckBox();
-        keepCheckBox.addActionListener(editFormListener);
-        formPanel.add(keepCheckBox);
+        String[] keepOptions = {"Default", "Yes", "No"};
+        JComboBox<String> keepField = new JComboBox<>(keepOptions);
+        keepField.addActionListener(editFormListener);
+        formPanel.add(keepField);
 
         // add event to combo box
         typeField.addActionListener((e) ->
@@ -226,7 +228,7 @@ public class Window extends JFrame {
                 passwordField.setText(section.getPassword());
                 nameField.setText(section.getUseremail());
                 emailField.setText(section.getUseremail());
-                keepCheckBox.setSelected(section.isKeep());
+                keepField.setSelectedItem(section.getKeep());
                 isEditing = false;
             }
         });
@@ -252,8 +254,7 @@ public class Window extends JFrame {
             if(result == JOptionPane.YES_OPTION)
             {
                 isEditing = false;
-                DataManagementModel.removeSection(section);
-                sectionList.setListData(DataManagementModel.getSections());
+                dataManagementModel.removeElement(section);
                 if(prevIndex > 0)
                 {
                     sectionList.setSelectedIndex(prevIndex - 1);

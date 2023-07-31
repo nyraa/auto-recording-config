@@ -1,5 +1,8 @@
 public class Section
 {
+    public static int KEEP_DEFAULT = 0;
+    public static int KEEP_TRUE = 1;
+    public static int KEEP_FALSE = 2;
     private String sectionName;
     private String type;
     private String startTime;
@@ -8,8 +11,8 @@ public class Section
     private String password;
     private String username;
     private String useremail;
-    private boolean keep;
-    public Section(String sectionName, String type, String startTime, String endTime, String roomInfo, String password, String username, String useremail, boolean keep)
+    private int keep;
+    public Section(String sectionName, String type, String startTime, String endTime, String roomInfo, String password, String username, String useremail, int keep)
     {
         this.sectionName = sectionName;
         this.type = type;
@@ -31,7 +34,7 @@ public class Section
         this.password = "";
         this.username = "";
         this.useremail = "";
-        this.keep = false;
+        this.keep = KEEP_DEFAULT;
     }
     public String getSectionName()
     {
@@ -65,7 +68,7 @@ public class Section
     {
         return useremail;
     }
-    public boolean isKeep()
+    public int getKeep()
     {
         return keep;
     }
@@ -127,7 +130,7 @@ public class Section
     {
         this.useremail = useremail;
     }
-    public void setKeep(boolean keep)
+    public void setKeep(int keep)
     {
         this.keep = keep;
     }

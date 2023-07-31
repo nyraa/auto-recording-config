@@ -1,12 +1,16 @@
-import java.util.Vector;
+import javax.swing.DefaultListModel;
 
 import java.io.*;
 
-public class DataManagementModel
+public class DataManagementModel extends DefaultListModel<Section>
 {
-    private static Vector<Section> sections = new Vector<>();
-    private static String header = null;
-    public static boolean loadSchedule(String filename)
+    private String header = null;
+    public DataManagementModel(String filename)
+    {
+        super();
+        loadSchedule(filename);
+    }
+    public boolean loadSchedule(String filename)
     {
         // read line
         try
@@ -25,7 +29,8 @@ public class DataManagementModel
                 {
                     if(sectionName != null && !sectionName.equals("DEFAULT"))
                     {
-                        sections.add(currentSection);
+                        
+                        addElement(currentSection);
                     }
                     sectionName = line.substring(1, line.length() - 1);
                     if(line.equals("[DEFAULT]"))
@@ -66,7 +71,7 @@ public class DataManagementModel
                     }
                     else if(propName.equals("keep"))
                     {
-                        currentSection.setKeep(propValue.equals("true"));
+                        currentSection.setKeep(propValue.equals("true") ? Section.KEEP_TRUE : Section.KEEP_FALSE);
                     }
                     else if(propName.equals("password"))
                     {
@@ -84,7 +89,7 @@ public class DataManagementModel
             }
             if(sectionName != null && !sectionName.equals("DEFAULT"))
             {
-                sections.add(currentSection);
+                addElement(currentSection);
             }
             reader.close();
         }
