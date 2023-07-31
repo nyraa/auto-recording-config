@@ -100,12 +100,48 @@ public class DataManagementModel extends DefaultListModel<Section>
         }
         return true;
     }
-    public static Vector<Section> getSections()
+    public boolean writeSchedule(String filename)
     {
-        return sections;
-    }
-    public static boolean removeSection(Section toRemove)
-    {
-        return sections.remove(toRemove);
+        try
+        {
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename)));
+            writer.write(header);
+            for(int i = 0; i < size(); i++)
+            {
+                Section section = get(i);
+                writer.write("[" + section.getSectionName() + "]\n");
+                writer.write("type = " + section.getType() + "\n");
+                writer.write("room = " + section.getRoomInfo() + "\n");
+                writer.write("start = " + section.getStartTime() + "\n");
+                writer.write("end = " + section.getEndTime() + "\n");
+                int keep = section.getKeep();
+                if(keep != Section.KEEP_DEFAULT)
+                {
+                    writer.write("keep = " + (keep == Section.KEEP_TRUE ? "true" : "false") + "\n");
+                }
+                String password = section.getPassword();
+                if(!password.equals(""))
+                {
+                    writer.write("password = " + section.getPassword() + "\n");
+                }
+                String name = section.getUsername();
+                if(!name.equals(""))
+                {
+                    writer.write("name = " + section.getUsername() + "\n");
+                }
+                String email = section.getUseremail();
+                if(!email.equals(""))
+                {
+                    writer.write("email = " + section.getUseremail() + "\n");
+                }
+            }
+            writer.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }
