@@ -15,7 +15,7 @@ public class DataManagementModel extends DefaultListModel<Section>
         // read line
         try
         {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename)));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"));
             String line = null;
             Section currentSection = null;
             String sectionName = null;
@@ -104,7 +104,7 @@ public class DataManagementModel extends DefaultListModel<Section>
     {
         try
         {
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename)));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
             writer.write(header);
             writer.write("\n");
             for(int i = 0; i < size(); i++)
