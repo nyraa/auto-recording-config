@@ -58,6 +58,10 @@ public class Window extends JFrame {
                 {
                     JOptionPane.showMessageDialog(null, "Error occurred while checking schedule.\nError code: " + result, "Error", JOptionPane.ERROR_MESSAGE);
                 }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Check schedule successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
             catch(Exception ex)
             {
