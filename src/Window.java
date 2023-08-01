@@ -9,6 +9,7 @@ public class Window extends JFrame {
     private boolean isEditing = false;
     private int prevIndex = -1;
     private boolean isAdjusting = false;
+    private boolean isNewAdding = true;
     public Window(String filename) {
         super("config");
         setSize(600, 400);
@@ -176,62 +177,6 @@ public class Window extends JFrame {
             }
         });
 
-        // add event to section list
-        sectionList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if(isAdjusting)
-                {
-                    return;
-                }
-                if(e.getValueIsAdjusting()) {
-                    return;
-                }
-                if(isEditing)
-                {
-                    // prompt to save or cancel
-                    int result = JOptionPane.showConfirmDialog(null, "Unsaved changes, save?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
-                    if(result == JOptionPane.YES_OPTION)
-                    {
-
-                    }
-                    else if(result == JOptionPane.NO_OPTION)
-                    {
-
-                    }
-                    else
-                    {
-                        // restore selection
-                        isAdjusting = true;
-                        if(prevIndex != -1)
-                        {
-                            sectionList.setSelectedIndex(prevIndex);
-                        }
-                        else
-                        {
-                            sectionList.clearSelection();
-                        }
-                        isAdjusting = false;
-                        return;
-                    }
-                }
-                prevIndex = sectionList.getSelectedIndex();
-                Section section = sectionList.getSelectedValue();
-                if (section == null) {
-                    return;
-                }
-                sectionField.setText(section.getSectionName());
-                typeField.setSelectedItem(section.getType());
-                roomField.setText(section.getRoomInfo());
-                startField.setText(section.getStartTime());
-                endField.setText(section.getEndTime());
-                passwordField.setText(section.getPassword());
-                nameField.setText(section.getUsername());
-                emailField.setText(section.getUseremail());
-                keepField.setSelectedItem(section.getKeep());
-                isEditing = false;
-            }
-        });
 
         gbc.weightx = 2;
         gbc.weighty = 1;
@@ -241,17 +186,38 @@ public class Window extends JFrame {
 
         JPanel editPanel = new JPanel();
         JButton addButton = new JButton("New");
+        addButton.addActionListener((e) ->
+        {
+            if(isNewAdding)
+            {
+                return;
+            }
+            sectionList.clearSelection();
+            if(sectionList.getSelectedIndex() == -1)
+            {
+                sectionField.setText("");
+                typeField.setSelectedIndex(0);
+                roomField.setText("");
+                startField.setText("");
+                endField.setText("");
+                passwordField.setText("");
+                nameField.setText("");
+                emailField.setText("");
+                keepField.setSelectedIndex(0);
+                isNewAdding = true;
+            }
+        });
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener((e) ->
         {
             Section section;
-            if(sectionList.getSelectedIndex() == -1)
+            if(prevIndex == -1)
             {
                 section = new Section();
             }
             else
             {
-                section = sectionList.getSelectedValue();
+                section = dataManagementModel.getElementAt(prevIndex);
             }
             String sectionName = sectionField.getText();
             if(sectionName.equals(""))
@@ -269,6 +235,7 @@ public class Window extends JFrame {
             section.setUseremail(emailField.getText());
             section.setKeep(keepField.getSelectedIndex());
             isEditing = false;
+            isNewAdding = false;
             if(sectionList.getSelectedIndex() == -1)
             {
                 dataManagementModel.addElement(section);
@@ -306,6 +273,65 @@ public class Window extends JFrame {
         editPanel.add(addButton);
         editPanel.add(saveButton);
         editPanel.add(deleteButton);
+
+        
+        // add event to section list
+        sectionList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(isAdjusting)
+                {
+                    return;
+                }
+                if(e.getValueIsAdjusting()) {
+                    return;
+                }
+                if(isEditing)
+                {
+                    // prompt to save or cancel
+                    int result = JOptionPane.showConfirmDialog(null, "Unsaved changes, save?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
+                    if(result == JOptionPane.YES_OPTION)
+                    {
+                        saveButton.doClick();
+                    }
+                    else if(result == JOptionPane.NO_OPTION)
+                    {
+
+                    }
+                    else
+                    {
+                        // restore selection
+                        isAdjusting = true;
+                        if(prevIndex != -1)
+                        {
+                            sectionList.setSelectedIndex(prevIndex);
+                        }
+                        else
+                        {
+                            sectionList.clearSelection();
+                        }
+                        isAdjusting = false;
+                        return;
+                    }
+                }
+                isNewAdding = false;
+                prevIndex = sectionList.getSelectedIndex();
+                Section section = sectionList.getSelectedValue();
+                if (section == null) {
+                    return;
+                }
+                sectionField.setText(section.getSectionName());
+                typeField.setSelectedItem(section.getType());
+                roomField.setText(section.getRoomInfo());
+                startField.setText(section.getStartTime());
+                endField.setText(section.getEndTime());
+                passwordField.setText(section.getPassword());
+                nameField.setText(section.getUsername());
+                emailField.setText(section.getUseremail());
+                keepField.setSelectedItem(section.getKeep());
+                isEditing = false;
+            }
+        });
 
         container.add(editPanel, "South");
     }
