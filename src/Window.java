@@ -49,9 +49,26 @@ public class Window extends JFrame {
         Box box = new Box(BoxLayout.Y_AXIS);
 
         JButton checkNowButton = new JButton("Check now");
+        checkNowButton.addActionListener((e) -> {
+            try
+            {
+                int result = ExecExternal.exec(new String[] {"pyw", DAEMON_PY}, baseDir);
+                if(result != 0)
+                {
+                    JOptionPane.showMessageDialog(null, "Error occurred while checking schedule.\nError code: " + result, "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            catch(Exception ex)
+            {
+                ex.printStackTrace();
+            }
+        });
+        JButton refreshButton = new JButton("Refresh now");
         JButton resetButton = new JButton("Reset");
 
         box.add(checkNowButton);
+        box.add(Box.createVerticalStrut(10));
+        box.add(refreshButton);
         box.add(Box.createVerticalStrut(10));
         box.add(resetButton);
         actionPanel.add(box);
