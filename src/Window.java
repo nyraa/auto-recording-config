@@ -14,6 +14,7 @@ public class Window extends JFrame {
     private static final String SCHEDULE_INI = "schedule.ini";
     private static final String CONFIG_INI = "config.ini";
     private static final String DAEMON_PY = "daemon.py";
+    private static final String RESET_PY = "reset.py";
 
     public Window(String baseDir) {
         super("config");
@@ -65,6 +66,24 @@ public class Window extends JFrame {
         });
         JButton refreshButton = new JButton("Refresh now");
         JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener((e) -> {
+            try
+            {
+                int result = ExecExternal.exec(new String[] {"pyw", RESET_PY}, baseDir);
+                if(result != 0)
+                {
+                    JOptionPane.showMessageDialog(null, "Error occurred while resetting schedule.\nError code: " + result, "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Reset successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+            catch(Exception ex)
+            {
+                ex.printStackTrace();
+            }
+        });
 
         box.add(checkNowButton);
         box.add(Box.createVerticalStrut(10));
