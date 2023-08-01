@@ -246,6 +246,7 @@ public class Window extends JFrame {
                     sectionList.setSelectedIndex(0);
                 }
                 // prevIndex = sectionList.getSelectedIndex();
+                saveButton.doClick();
             }
         });
         editPanel.add(addButton);
