@@ -299,7 +299,7 @@ public class Window extends JFrame {
                 passwordField.setText(section.getPassword());
                 nameField.setText(section.getUsername());
                 emailField.setText(section.getUseremail());
-                keepField.setSelectedItem(section.getKeep());
+                keepField.setSelectedIndex(section.getKeep());
                 isEditing = false;
             }
         });
