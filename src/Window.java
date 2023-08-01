@@ -10,13 +10,13 @@ public class Window extends JFrame {
     private int prevIndex = -1;
     private boolean isAdjusting = false;
     private boolean isNewAdding = true;
+
     public Window(String filename) {
         super("config");
         setSize(600, 400);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-
 
         Container container = getContentPane();
         container.setLayout(new BorderLayout());
@@ -68,7 +68,6 @@ public class Window extends JFrame {
         sectionList.setLayoutOrientation(JList.VERTICAL);
         sectionList.setVisibleRowCount(-1);
 
-
         JScrollPane scrollPane = new JScrollPane(sectionList);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = 1;
@@ -78,13 +77,10 @@ public class Window extends JFrame {
 
         // date format: YYYY-MM-DD HH:MM:SS
         MaskFormatter dateFormatter;
-        try
-        {
+        try {
             dateFormatter = new MaskFormatter("####-##-## ##:##:##");
             dateFormatter.setPlaceholderCharacter('0');
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return;
         }
@@ -120,7 +116,7 @@ public class Window extends JFrame {
         formPanel.add(sectionField);
 
         formPanel.add(new JLabel("Type: "));
-        String[] types = {"zoom", "webex"};
+        String[] types = { "zoom", "webex" };
         JComboBox<String> typeField = new JComboBox<>(types);
         typeField.addActionListener(editFormListener);
         formPanel.add(typeField);
@@ -157,26 +153,21 @@ public class Window extends JFrame {
         formPanel.add(emailField);
 
         formPanel.add(new JLabel("Keep: "));
-        String[] keepOptions = {"Default", "Yes", "No"};
+        String[] keepOptions = { "Default", "Yes", "No" };
         JComboBox<String> keepField = new JComboBox<>(keepOptions);
         keepField.addActionListener(editFormListener);
         formPanel.add(keepField);
 
         // add event to combo box
-        typeField.addActionListener((e) ->
-        {
-            if(typeField.getSelectedItem().equals("zoom"))
-            {
+        typeField.addActionListener((e) -> {
+            if (typeField.getSelectedItem().equals("zoom")) {
                 passwordField.setEnabled(true);
                 emailField.setEnabled(false);
-            }
-            else if(typeField.getSelectedItem().equals("webex"))
-            {
+            } else if (typeField.getSelectedItem().equals("webex")) {
                 passwordField.setEnabled(false);
                 emailField.setEnabled(true);
             }
         });
-
 
         gbc.weightx = 2;
         gbc.weighty = 1;
@@ -186,15 +177,12 @@ public class Window extends JFrame {
 
         JPanel editPanel = new JPanel();
         JButton addButton = new JButton("New");
-        addButton.addActionListener((e) ->
-        {
-            if(isNewAdding)
-            {
+        addButton.addActionListener((e) -> {
+            if (isNewAdding) {
                 return;
             }
             sectionList.clearSelection();
-            if(sectionList.getSelectedIndex() == -1)
-            {
+            if (sectionList.getSelectedIndex() == -1) {
                 sectionField.setText("");
                 typeField.setSelectedIndex(0);
                 roomField.setText("");
@@ -208,25 +196,21 @@ public class Window extends JFrame {
             }
         });
         JButton saveButton = new JButton("Save");
-        saveButton.addActionListener((e) ->
-        {
+        saveButton.addActionListener((e) -> {
             Section section;
-            if(prevIndex == -1)
+            if (prevIndex == -1) // new section
             {
                 section = new Section();
-            }
-            else
-            {
+            } else {
                 section = dataManagementModel.getElementAt(prevIndex);
             }
             String sectionName = sectionField.getText();
-            if(sectionName.equals(""))
-            {
+            if (sectionName.equals("")) {
                 JOptionPane.showMessageDialog(null, "Section name cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             section.setSectionName(sectionName);
-            section.setType((String)typeField.getSelectedItem());
+            section.setType((String) typeField.getSelectedItem());
             section.setRoomInfo(roomField.getText());
             section.setStartTime(startField.getText());
             section.setEndTime(endField.getText());
@@ -236,78 +220,62 @@ public class Window extends JFrame {
             section.setKeep(keepField.getSelectedIndex());
             isEditing = false;
             isNewAdding = false;
-            if(sectionList.getSelectedIndex() == -1)
-            {
+            if (sectionList.getSelectedIndex() == -1) {
                 dataManagementModel.addElement(section);
                 sectionList.setSelectedIndex(dataManagementModel.getSize() - 1);
-            }
-            else
-            {
+            } else {
                 sectionList.repaint();
             }
         });
         JButton deleteButton = new JButton("Delete");
-        deleteButton.addActionListener((e) ->
-        {
-            if(sectionList.getSelectedIndex() == -1)
+        deleteButton.addActionListener((e) -> {
+            if (sectionList.getSelectedIndex() == -1) // no selection
             {
                 return;
             }
             Section section = sectionList.getSelectedValue();
-            int result = JOptionPane.showConfirmDialog(null, "Delete section " + section.getSectionName() + "?", "Warning", JOptionPane.YES_NO_OPTION);
-            if(result == JOptionPane.YES_OPTION)
-            {
+            int result = JOptionPane.showConfirmDialog(null, "Delete section " + section.getSectionName() + "?",
+                    "Warning", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
                 isEditing = false;
                 dataManagementModel.removeElement(section);
-                if(prevIndex > 0)
-                {
+                if (prevIndex > 0) {
                     sectionList.setSelectedIndex(prevIndex - 1);
-                }
-                else
-                {
+                } else {
                     sectionList.setSelectedIndex(0);
                 }
-                prevIndex = sectionList.getSelectedIndex();
+                // prevIndex = sectionList.getSelectedIndex();
             }
         });
         editPanel.add(addButton);
         editPanel.add(saveButton);
         editPanel.add(deleteButton);
 
-        
         // add event to section list
         sectionList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if(isAdjusting)
-                {
+                if (isAdjusting) {
                     return;
                 }
-                if(e.getValueIsAdjusting()) {
+                if (e.getValueIsAdjusting()) {
                     return;
                 }
-                if(isEditing)
-                {
+                if (isEditing) {
                     // prompt to save or cancel
-                    int result = JOptionPane.showConfirmDialog(null, "Unsaved changes, save?", "Warning", JOptionPane.YES_NO_CANCEL_OPTION);
-                    if(result == JOptionPane.YES_OPTION)
-                    {
+                    int result = JOptionPane.showConfirmDialog(null, "Unsaved changes, save?", "Warning",
+                            JOptionPane.YES_NO_CANCEL_OPTION);
+                    if (result == JOptionPane.YES_OPTION) {
+                        // save changes
                         saveButton.doClick();
-                    }
-                    else if(result == JOptionPane.NO_OPTION)
-                    {
-
-                    }
-                    else
-                    {
+                    } else if (result == JOptionPane.NO_OPTION) {
+                        // do nothing
+                    } else {
                         // restore selection
                         isAdjusting = true;
-                        if(prevIndex != -1)
-                        {
+                        if (prevIndex != -1) {
                             sectionList.setSelectedIndex(prevIndex);
-                        }
-                        else
-                        {
+                        } else {
                             sectionList.clearSelection();
                         }
                         isAdjusting = false;
@@ -316,6 +284,7 @@ public class Window extends JFrame {
                 }
                 isNewAdding = false;
                 prevIndex = sectionList.getSelectedIndex();
+
                 Section section = sectionList.getSelectedValue();
                 if (section == null) {
                     return;
