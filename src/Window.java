@@ -3,6 +3,7 @@ import javax.swing.event.*;
 import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.nio.file.Paths;
 import java.awt.event.ActionEvent;
 
 public class Window extends JFrame {
@@ -10,8 +11,11 @@ public class Window extends JFrame {
     private int prevIndex = -1;
     private boolean isAdjusting = false;
     private boolean isNewAdding = true;
+    private static final String SCHEDULE_INI = "schedule.ini";
+    private static final String CONFIG_INI = "config.ini";
+    private static final String DAEMON_PY = "daemon.py";
 
-    public Window(String filename) {
+    public Window(String baseDir) {
         super("config");
         setSize(600, 400);
         setResizable(false);
@@ -61,7 +65,7 @@ public class Window extends JFrame {
         JPanel lowerPanel = new JPanel();
         lowerPanel.setLayout(new GridBagLayout());
 
-        DataManagementModel dataManagementModel = new DataManagementModel(filename);
+        DataManagementModel dataManagementModel = new DataManagementModel(Paths.get(baseDir, SCHEDULE_INI).toString());
         JList<Section> sectionList = new JList<>(dataManagementModel);
         sectionList.setCellRenderer(new SectionListRenderer());
         sectionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -226,7 +230,7 @@ public class Window extends JFrame {
             } else {
                 sectionList.repaint();
             }
-            dataManagementModel.writeSchedule(filename);
+            dataManagementModel.writeSchedule(Paths.get(baseDir, SCHEDULE_INI).toString());
         });
         JButton deleteButton = new JButton("Delete");
         deleteButton.addActionListener((e) -> {
