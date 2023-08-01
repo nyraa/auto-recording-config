@@ -226,6 +226,7 @@ public class Window extends JFrame {
             } else {
                 sectionList.repaint();
             }
+            dataManagementModel.writeSchedule(filename);
         });
         JButton deleteButton = new JButton("Delete");
         deleteButton.addActionListener((e) -> {

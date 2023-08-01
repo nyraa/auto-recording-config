@@ -106,6 +106,7 @@ public class DataManagementModel extends DefaultListModel<Section>
         {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename)));
             writer.write(header);
+            writer.write("\n");
             for(int i = 0; i < size(); i++)
             {
                 Section section = get(i);
@@ -134,6 +135,7 @@ public class DataManagementModel extends DefaultListModel<Section>
                 {
                     writer.write("email = " + section.getUseremail() + "\n");
                 }
+                writer.write("\n");
             }
             writer.close();
         }
