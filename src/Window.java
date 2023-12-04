@@ -197,8 +197,7 @@ public class Window extends JFrame {
         formPanel.add(emailField);
 
         formPanel.add(new JLabel("Keep: "));
-        String[] keepOptions = { "Default", "Yes", "No" };
-        JComboBox<String> keepField = new JComboBox<>(keepOptions);
+        JComboBox<String> keepField = new JComboBox<>(Section.KEEP_TYPE);
         keepField.addActionListener(editFormListener);
         formPanel.add(keepField);
 

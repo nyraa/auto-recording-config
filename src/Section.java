@@ -1,8 +1,15 @@
+import java.util.HashMap;
+
 public class Section
 {
+    public static String[] KEEP_TYPE = { "Default", "Yes", "No", "Repeat"};
     public static int KEEP_DEFAULT = 0;
     public static int KEEP_TRUE = 1;
     public static int KEEP_FALSE = 2;
+    public static int KEEP_REPEAT = 3;
+
+    public static String[] KEYS = {"type", "room", "start", "end", "keep", "password", "name", "email", "repeat"};
+
     private String sectionName;
     private String type;
     private String startTime;
@@ -11,19 +18,10 @@ public class Section
     private String password;
     private String username;
     private String useremail;
+    private String repeat;
     private int keep;
-    public Section(String sectionName, String type, String startTime, String endTime, String roomInfo, String password, String username, String useremail, int keep)
-    {
-        this.sectionName = sectionName;
-        this.type = type;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.roomInfo = roomInfo;
-        this.password = password;
-        this.username = username;
-        this.useremail = useremail;
-        this.keep = keep;
-    }
+    private HashMap<String, String> unknown;
+
     public Section()
     {
         this.sectionName = "";
@@ -34,7 +32,13 @@ public class Section
         this.password = "";
         this.username = "";
         this.useremail = "";
+        this.repeat = "";
         this.keep = KEEP_DEFAULT;
+        this.unknown = new HashMap<String, String>();
+    }
+    public void setUnknown(String key, String value)
+    {
+        unknown.put(key, value);
     }
     public String getSectionName()
     {
@@ -71,6 +75,14 @@ public class Section
     public int getKeep()
     {
         return keep;
+    }
+    public String getRepeat()
+    {
+        return repeat;
+    }
+    public HashMap<String, String> getUnknown()
+    {
+        return unknown;
     }
     public void setSectionName(String sectionName)
     {
@@ -133,5 +145,13 @@ public class Section
     public void setKeep(int keep)
     {
         this.keep = keep;
+    }
+    public void setRepeat(String repeat)
+    {
+        this.repeat = repeat;
+    }
+    public void setUnknown(HashMap<String, String> unknown)
+    {
+        this.unknown = unknown;
     }
 }

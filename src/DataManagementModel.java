@@ -1,4 +1,5 @@
 import javax.swing.DefaultListModel;
+import org.ini4j.*;
 
 import java.io.*;
 
@@ -15,83 +16,67 @@ public class DataManagementModel extends DefaultListModel<Section>
         // read line
         try
         {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"));
-            String line = null;
-            Section currentSection = null;
-            String sectionName = null;
-            while((line = reader.readLine()) != null)
+            Wini ini = new Wini(new File(filename));
+
+            for (String sectionName : ini.keySet())
             {
-                if(line.equals(""))
-                {
-                    continue;
-                }
-                if(line.startsWith("[") && line.endsWith("]"))
-                {
-                    if(sectionName != null && !sectionName.equals("DEFAULT"))
-                    {
-                        
-                        addElement(currentSection);
-                    }
-                    sectionName = line.substring(1, line.length() - 1);
-                    if(line.equals("[DEFAULT]"))
-                    {
-                        header = line + "\n";
-                    }
-                    else
-                    {
-                        currentSection = new Section();
-                        currentSection.setSectionName(sectionName);
-                    }
-                    continue;
-                }
                 if(sectionName.equals("DEFAULT"))
                 {
-                    header += line + "\n";
+                    continue;
                 }
-                else
+                Section section = new Section();
+                section.setSectionName(sectionName);
+                for(String key : Section.KEYS)
                 {
-                    String propName = line.substring(0, line.indexOf("=")).trim();
-                    String propValue = line.substring(line.indexOf("=") + 1).trim();
-                    // props: type, room, start, end, keep, password, name, email
-                    if(propName.equals("type"))
-                    {
-                        currentSection.setType(propValue);
-                    }
-                    else if(propName.equals("room"))
-                    {
-                        currentSection.setRoomInfo(propValue);
-                    }
-                    else if(propName.equals("start"))
-                    {
-                        currentSection.setStartTime(propValue);
-                    }
-                    else if(propName.equals("end"))
-                    {
-                        currentSection.setEndTime(propValue);
-                    }
-                    else if(propName.equals("keep"))
-                    {
-                        currentSection.setKeep(propValue.equals("true") ? Section.KEEP_TRUE : Section.KEEP_FALSE);
-                    }
-                    else if(propName.equals("password"))
-                    {
-                        currentSection.setPassword(propValue);
-                    }
-                    else if(propName.equals("name"))
-                    {
-                        currentSection.setUsername(propValue);
-                    }
-                    else if(propName.equals("email"))
-                    {
-                        currentSection.setUseremail(propValue);
+                    switch (key) {
+                        case "type":
+                            section.setType(ini.get(sectionName, key));
+                            break;
+                        case "room":
+                            section.setRoomInfo(ini.get(sectionName, key));
+                            break;
+                        case "start":
+                            section.setStartTime(ini.get(sectionName, key));
+                            break;
+                        case "end":
+                            section.setEndTime(ini.get(sectionName, key));
+                            break;
+                        case "keep":
+                            switch(ini.get(sectionName, key))
+                            {
+                                case "true":
+                                    section.setKeep(Section.KEEP_TRUE);
+                                    break;
+                                case "false":
+                                    section.setKeep(Section.KEEP_FALSE);
+                                    break;
+                                case "repeat":
+                                    section.setKeep(Section.KEEP_REPEAT);
+                                    break;
+                                default:
+                                    section.setKeep(Section.KEEP_DEFAULT);
+                                    break;
+                            }
+                            break;
+                        case "password":
+                            section.setPassword(ini.get(sectionName, key));
+                            break;
+                        case "name":
+                            section.setUsername(ini.get(sectionName, key));
+                            break;
+                        case "email":
+                            section.setUseremail(ini.get(sectionName, key));
+                            break;
+                        case "repeat":
+                            section.setRepeat(ini.get(sectionName, key));
+                            break;
+                        default:
+                            section.setUnknown(key, ini.get(sectionName, key));
+                            break;
                     }
                 }
+                addElement(section);
             }
-            if(sectionName != null && !sectionName.equals("DEFAULT"))
-            {
-                addElement(currentSection);
-            }
-            reader.close();
         }
         catch (Exception e)
         {
@@ -104,40 +89,39 @@ public class DataManagementModel extends DefaultListModel<Section>
     {
         try
         {
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
-            writer.write(header);
-            writer.write("\n");
+            Wini ini = new Wini(new File(filename));
+
             for(int i = 0; i < size(); i++)
             {
                 Section section = get(i);
-                writer.write("[" + section.getSectionName() + "]\n");
-                writer.write("type = " + section.getType() + "\n");
-                writer.write("room = " + section.getRoomInfo() + "\n");
-                writer.write("start = " + section.getStartTime() + "\n");
-                writer.write("end = " + section.getEndTime() + "\n");
-                int keep = section.getKeep();
-                if(keep != Section.KEEP_DEFAULT)
-                {
-                    writer.write("keep = " + (keep == Section.KEEP_TRUE ? "true" : "false") + "\n");
-                }
+                String sectionName = section.getSectionName();
+                ini.put(sectionName, "type", section.getType());
+                ini.put(sectionName, "room", section.getRoomInfo());
+                ini.put(sectionName, "start", section.getStartTime());
+                ini.put(sectionName, "end", section.getEndTime());
+                ini.put(sectionName, "repeat", section.getRepeat());
+                ini.put(sectionName, "keep", Section.KEEP_TYPE[section.getKeep()]);
                 String password = section.getPassword();
                 if(!password.equals(""))
                 {
-                    writer.write("password = " + section.getPassword() + "\n");
+                    ini.put(sectionName, "password", section.getPassword());
                 }
                 String name = section.getUsername();
                 if(!name.equals(""))
                 {
-                    writer.write("name = " + section.getUsername() + "\n");
+                    ini.put(sectionName, "name", section.getUsername());
                 }
                 String email = section.getUseremail();
                 if(!email.equals(""))
                 {
-                    writer.write("email = " + section.getUseremail() + "\n");
+                    ini.put(sectionName, "email", section.getUseremail());
                 }
-                writer.write("\n");
+                for(String key : section.getUnknown().keySet())
+                {
+                    ini.put(sectionName, key, section.getUnknown().get(key));
+                }
             }
-            writer.close();
+            ini.store();
         }
         catch (Exception e)
         {
