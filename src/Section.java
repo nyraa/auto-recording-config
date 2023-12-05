@@ -1,8 +1,9 @@
-import java.util.HashMap;
+import org.ini4j.Ini;
 
 public class Section
 {
     public static String[] KEEP_TYPE = { "Default", "Yes", "No", "Repeat"};
+    public static String[] KEEP_VALUE = {"Default", "true", "false", "repeat"};
     public static int KEEP_DEFAULT = 0;
     public static int KEEP_TRUE = 1;
     public static int KEEP_FALSE = 2;
@@ -11,34 +12,20 @@ public class Section
     public static String[] KEYS = {"type", "room", "start", "end", "keep", "password", "name", "email", "repeat"};
 
     private String sectionName;
-    private String type;
-    private String startTime;
-    private String endTime;
-    private String roomInfo;
-    private String password;
-    private String username;
-    private String useremail;
-    private String repeat;
-    private int keep;
-    private HashMap<String, String> unknown;
-
-    public Section()
+    private Ini.Section section;
+    public Section(String sectionName, Ini.Section section)
     {
-        this.sectionName = "";
-        this.type = "";
-        this.startTime = "";
-        this.endTime = "";
-        this.roomInfo = "";
-        this.password = "";
-        this.username = "";
-        this.useremail = "";
-        this.repeat = "";
-        this.keep = KEEP_DEFAULT;
-        this.unknown = new HashMap<String, String>();
+        this.sectionName = sectionName;
+        this.section = section;
     }
-    public void setUnknown(String key, String value)
+    public void setSection(String sectionName, Ini.Section section)
     {
-        unknown.put(key, value);
+        this.sectionName = sectionName;
+        this.section = section;
+    }
+    public Ini.Section getSection()
+    {
+        return section;
     }
     public String getSectionName()
     {
@@ -46,43 +33,47 @@ public class Section
     }
     public String getType()
     {
-        return type;
+        return section.getOrDefault("type", "");
     }
     public String getStartTime()
     {
-        return startTime;
+        return section.getOrDefault("start", "");
     }
     public String getEndTime()
     {
-        return endTime;
+        return section.getOrDefault("end", "");
     }
     public String getRoomInfo()
     {
-        return roomInfo;
+        return section.getOrDefault("room", "");
     }
     public String getPassword()
     {
-        return password;
+        return section.getOrDefault("password", "");
     }
     public String getUsername()
     {
-        return username;
+        return section.getOrDefault("name", "");
     }
     public String getUseremail()
     {
-        return useremail;
+        return section.getOrDefault("email", "");
     }
     public int getKeep()
     {
-        return keep;
+        String keep = section.getOrDefault("keep", "");
+        if (keep.equals("true"))
+            return KEEP_TRUE;
+        else if (keep.equals("false"))
+            return KEEP_FALSE;
+        else if (keep.equals("repeat"))
+            return KEEP_REPEAT;
+        else
+            return KEEP_DEFAULT;
     }
     public String getRepeat()
     {
-        return repeat;
-    }
-    public HashMap<String, String> getUnknown()
-    {
-        return unknown;
+        return section.getOrDefault("repeat", "");
     }
     public void setSectionName(String sectionName)
     {
@@ -90,7 +81,7 @@ public class Section
     }
     public void setType(String type)
     {
-        this.type = type;
+        section.put("type", type);
     }
     public boolean setStartTime(String startTime)
     {
@@ -106,7 +97,7 @@ public class Section
             if (startTime.charAt(i) < '0' || startTime.charAt(i) > '9')
                 return false;
         }
-        this.startTime = startTime;
+        section.put("start", startTime);
         return true;
     }
     public boolean setEndTime(String endTime)
@@ -123,35 +114,43 @@ public class Section
             if (endTime.charAt(i) < '0' || endTime.charAt(i) > '9')
                 return false;
         }
-        this.endTime = endTime;
+        section.put("end", endTime);
         return true;
     }
     public void setRoomInfo(String roomInfo)
     {
-        this.roomInfo = roomInfo;
+        section.put("room", roomInfo);
     }
     public void setPassword(String password)
     {
-        this.password = password;
+        if(password.equals(""))
+            section.remove("password");
+        else
+            section.put("password", password);
     }
     public void setUsername(String username)
     {
-        this.username = username;
+        if(username.equals(""))
+            section.remove("name");
+        else
+            section.put("name", username);
     }
     public void setUseremail(String useremail)
     {
-        this.useremail = useremail;
+        if(useremail.equals(""))
+            section.remove("email");
+        else
+            section.put("email", useremail);
     }
     public void setKeep(int keep)
     {
-        this.keep = keep;
+        if(keep == KEEP_DEFAULT)
+            section.remove("keep");
+        else
+            section.put("keep", KEEP_VALUE[keep]);
     }
     public void setRepeat(String repeat)
     {
-        this.repeat = repeat;
-    }
-    public void setUnknown(HashMap<String, String> unknown)
-    {
-        this.unknown = unknown;
+        section.put("repeat", repeat);
     }
 }

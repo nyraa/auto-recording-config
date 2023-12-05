@@ -241,13 +241,13 @@ public class Window extends JFrame {
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener((e) -> {
             Section section;
+            String sectionName = sectionField.getText();
             if (prevIndex == -1) // new section
             {
-                section = new Section();
+                section = dataManagementModel.spawnSection(sectionName);
             } else {
                 section = dataManagementModel.getElementAt(prevIndex);
             }
-            String sectionName = sectionField.getText();
             if (sectionName.equals("")) {
                 JOptionPane.showMessageDialog(null, "Section name cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -264,7 +264,6 @@ public class Window extends JFrame {
             isEditing = false;
             isNewAdding = false;
             if (sectionList.getSelectedIndex() == -1) {
-                dataManagementModel.addElement(section);
                 sectionList.setSelectedIndex(dataManagementModel.getSize() - 1);
             } else {
                 sectionList.repaint();
