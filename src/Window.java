@@ -201,6 +201,21 @@ public class Window extends JFrame {
         keepField.addActionListener(editFormListener);
         formPanel.add(keepField);
 
+        formPanel.add(new JLabel("Repeat: "));
+        // format to iso 8601 period
+        MaskFormatter repeatFormatter;
+        try {
+            repeatFormatter = new MaskFormatter("P#DT#'H#M#S");
+            repeatFormatter.setPlaceholderCharacter('0');
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        JFormattedTextField repeatField = new JFormattedTextField(repeatFormatter);
+        repeatField.getDocument().addDocumentListener(editFormDocumentListener);
+        formPanel.add(repeatField);
+        
+
         // add event to combo box
         typeField.addActionListener((e) -> {
             if (typeField.getSelectedItem().equals("zoom")) {
@@ -209,6 +224,15 @@ public class Window extends JFrame {
             } else if (typeField.getSelectedItem().equals("webex")) {
                 passwordField.setEnabled(false);
                 emailField.setEnabled(true);
+            }
+        });
+
+        // add event to keep combo box
+        keepField.addActionListener((e) -> {
+            if (keepField.getSelectedIndex() == Section.KEEP_REPEAT) {
+                repeatField.setEnabled(true);
+            } else {
+                repeatField.setEnabled(false);
             }
         });
 
@@ -229,12 +253,13 @@ public class Window extends JFrame {
                 sectionField.setText("");
                 typeField.setSelectedIndex(0);
                 roomField.setText("");
-                startField.setText("");
-                endField.setText("");
+                startField.setText("0000-00-00 00:00:00");
+                endField.setText("0000-00-00 00:00:00");
                 passwordField.setText("");
                 nameField.setText("");
                 emailField.setText("");
                 keepField.setSelectedIndex(0);
+                repeatField.setText("P0DT0H0M0S");
                 isNewAdding = true;
             }
         });
@@ -272,6 +297,7 @@ public class Window extends JFrame {
             section.setUsername(nameField.getText());
             section.setUseremail(emailField.getText());
             section.setKeep(keepField.getSelectedIndex());
+            section.setRepeat(repeatField.getText());
             isEditing = false;
             isNewAdding = false;
             if (sectionList.getSelectedIndex() == -1) {
@@ -353,6 +379,7 @@ public class Window extends JFrame {
                 nameField.setText(section.getUsername());
                 emailField.setText(section.getUseremail());
                 keepField.setSelectedIndex(section.getKeep());
+                repeatField.setText(section.getRepeat());
                 isEditing = false;
             }
         });

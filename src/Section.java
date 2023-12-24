@@ -154,6 +154,13 @@ public class Section
     }
     public void setRepeat(String repeat)
     {
-        section.put("repeat", repeat);
+        if(repeat.equals("P0DT0H0M0S"))
+        {
+            section.remove("repeat");
+        }
+        else
+        {
+            section.put("repeat", repeat);
+        }
     }
 }
