@@ -281,7 +281,6 @@ public class Window extends JFrame {
             String oldName = section.getSectionName();
             if(section.setSectionName(sectionName))
             {
-                System.out.println("Section name updated");
                 // section name updated
                 if(prevIndex != -1)
                 {
