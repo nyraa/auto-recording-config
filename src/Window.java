@@ -288,7 +288,7 @@ public class Window extends JFrame {
                     sectionList.setSelectedIndex(0);
                 }
                 // prevIndex = sectionList.getSelectedIndex();
-                saveButton.doClick();
+                dataManagementModel.writeSchedule(Paths.get(baseDir, SCHEDULE_INI).toString());
             }
         });
         editPanel.add(addButton);

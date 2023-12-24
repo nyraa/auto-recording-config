@@ -66,7 +66,8 @@ public class DataManagementModel extends DefaultListModel<Section>
         {
             Section section = (Section) obj;
             this.ini.remove(section.getSectionName());
-            return super.removeElement(obj);
+            super.removeElement(obj);
+            return true;
         }
         return false;
     }
