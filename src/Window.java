@@ -252,7 +252,18 @@ public class Window extends JFrame {
                 JOptionPane.showMessageDialog(null, "Section name cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            section.setSectionName(sectionName);
+
+            String oldName = section.getSectionName();
+            if(section.setSectionName(sectionName))
+            {
+                System.out.println("Section name updated");
+                // section name updated
+                if(prevIndex != -1)
+                {
+                    // if not new section
+                    dataManagementModel.renameSection(section, oldName);
+                }
+            }
             section.setType((String) typeField.getSelectedItem());
             section.setRoomInfo(roomField.getText());
             section.setStartTime(startField.getText());

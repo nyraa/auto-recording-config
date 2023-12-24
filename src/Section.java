@@ -25,7 +25,7 @@ public class Section
     }
     public Ini.Section getSection()
     {
-        return section;
+        return this.section;
     }
     public String getSectionName()
     {
@@ -75,9 +75,12 @@ public class Section
     {
         return section.getOrDefault("repeat", "");
     }
-    public void setSectionName(String sectionName)
+    public boolean setSectionName(String sectionName)
     {
-        this.sectionName = sectionName;
+        if(!this.sectionName.equals(this.sectionName = sectionName))
+            return true;
+        else
+            return false;
     }
     public void setType(String type)
     {

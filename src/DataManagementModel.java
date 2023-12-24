@@ -58,6 +58,20 @@ public class DataManagementModel extends DefaultListModel<Section>
         addElement(section);
         return section;
     }
+
+    public void renameSection(Section section, String oldName)
+    {
+        // rename from oldName to section.getSectionName()
+        if(ini.containsKey(section.getSectionName()))
+            return;
+        Ini.Section oldSection = section.getSection();
+        Ini.Section newSection = ini.add(section.getSectionName());
+        for (String optionKey : oldSection.keySet()) {
+            newSection.add(optionKey, oldSection.fetch(optionKey));
+        }
+        ini.remove(oldName);
+        section.setSection(section.getSectionName(), newSection);
+    }
     
     @Override
     public boolean removeElement(Object obj)
