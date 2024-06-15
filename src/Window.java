@@ -205,10 +205,8 @@ public class Window extends JFrame {
         // add event to combo box
         typeField.addActionListener((e) -> {
             if (typeField.getSelectedItem().equals("zoom")) {
-                passwordField.setEnabled(true);
                 emailField.setEnabled(false);
             } else if (typeField.getSelectedItem().equals("webex")) {
-                passwordField.setEnabled(false);
                 emailField.setEnabled(true);
             }
         });
