@@ -197,10 +197,24 @@ public class Window extends JFrame {
         formPanel.add(emailField);
 
         formPanel.add(new JLabel("Keep: "));
-        String[] keepOptions = { "Default", "Yes", "No" };
-        JComboBox<String> keepField = new JComboBox<>(keepOptions);
+        JComboBox<String> keepField = new JComboBox<>(Section.KEEP_TYPE);
         keepField.addActionListener(editFormListener);
         formPanel.add(keepField);
+
+        formPanel.add(new JLabel("Repeat: "));
+        // format to iso 8601 period
+        MaskFormatter repeatFormatter;
+        try {
+            repeatFormatter = new MaskFormatter("P#DT#'H#M#S");
+            repeatFormatter.setPlaceholderCharacter('0');
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        JFormattedTextField repeatField = new JFormattedTextField(repeatFormatter);
+        repeatField.getDocument().addDocumentListener(editFormDocumentListener);
+        formPanel.add(repeatField);
+        
 
         // add event to combo box
         typeField.addActionListener((e) -> {
@@ -208,6 +222,15 @@ public class Window extends JFrame {
                 emailField.setEnabled(false);
             } else if (typeField.getSelectedItem().equals("webex")) {
                 emailField.setEnabled(true);
+            }
+        });
+
+        // add event to keep combo box
+        keepField.addActionListener((e) -> {
+            if (keepField.getSelectedIndex() == Section.KEEP_REPEAT) {
+                repeatField.setEnabled(true);
+            } else {
+                repeatField.setEnabled(false);
             }
         });
 
@@ -228,30 +251,41 @@ public class Window extends JFrame {
                 sectionField.setText("");
                 typeField.setSelectedIndex(0);
                 roomField.setText("");
-                startField.setText("");
-                endField.setText("");
+                startField.setText("0000-00-00 00:00:00");
+                endField.setText("0000-00-00 00:00:00");
                 passwordField.setText("");
                 nameField.setText("");
                 emailField.setText("");
                 keepField.setSelectedIndex(0);
+                repeatField.setText("P0DT0H0M0S");
                 isNewAdding = true;
             }
         });
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener((e) -> {
             Section section;
+            String sectionName = sectionField.getText();
             if (prevIndex == -1) // new section
             {
-                section = new Section();
+                section = dataManagementModel.spawnSection(sectionName);
             } else {
                 section = dataManagementModel.getElementAt(prevIndex);
             }
-            String sectionName = sectionField.getText();
             if (sectionName.equals("")) {
                 JOptionPane.showMessageDialog(null, "Section name cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            section.setSectionName(sectionName);
+
+            String oldName = section.getSectionName();
+            if(section.setSectionName(sectionName))
+            {
+                // section name updated
+                if(prevIndex != -1)
+                {
+                    // if not new section
+                    dataManagementModel.renameSection(section, oldName);
+                }
+            }
             section.setType((String) typeField.getSelectedItem());
             section.setRoomInfo(roomField.getText());
             section.setStartTime(startField.getText());
@@ -260,10 +294,10 @@ public class Window extends JFrame {
             section.setUsername(nameField.getText());
             section.setUseremail(emailField.getText());
             section.setKeep(keepField.getSelectedIndex());
+            section.setRepeat(repeatField.getText());
             isEditing = false;
             isNewAdding = false;
             if (sectionList.getSelectedIndex() == -1) {
-                dataManagementModel.addElement(section);
                 sectionList.setSelectedIndex(dataManagementModel.getSize() - 1);
             } else {
                 sectionList.repaint();
@@ -288,7 +322,7 @@ public class Window extends JFrame {
                     sectionList.setSelectedIndex(0);
                 }
                 // prevIndex = sectionList.getSelectedIndex();
-                saveButton.doClick();
+                dataManagementModel.writeSchedule(Paths.get(baseDir, SCHEDULE_INI).toString());
             }
         });
         editPanel.add(addButton);
@@ -342,6 +376,7 @@ public class Window extends JFrame {
                 nameField.setText(section.getUsername());
                 emailField.setText(section.getUseremail());
                 keepField.setSelectedIndex(section.getKeep());
+                repeatField.setText(section.getRepeat());
                 isEditing = false;
             }
         });
