@@ -40,6 +40,10 @@ public class Window extends JFrame {
         statusPanel.add(statusValue);
         statusPanel.add(currentLabelName);
         statusPanel.add(currentRunningValue);
+        StatusDaemon statusDaemon = new StatusDaemon(Paths.get(baseDir, CONFIG_INI).toString());
+        statusDaemon.setStatusLabel(statusValue);
+        statusDaemon.setRunningLabel(currentRunningValue);
+        statusDaemon.start();
 
         // status panel align to left
         upperPanel.add(statusPanel, "West");
@@ -69,6 +73,9 @@ public class Window extends JFrame {
             }
         });
         JButton refreshButton = new JButton("Refresh now");
+        refreshButton.addActionListener((e) -> {
+            statusDaemon.checkStatus();
+        });
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener((e) -> {
             try
@@ -87,6 +94,7 @@ public class Window extends JFrame {
             {
                 ex.printStackTrace();
             }
+            statusDaemon.checkStatus();
         });
 
         box.add(checkNowButton);
